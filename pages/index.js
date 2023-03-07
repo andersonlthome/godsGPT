@@ -5,9 +5,11 @@ import styles from "./index.module.css";
 export default function Home() {
   const [subjectInput, setSubjectInput] = useState("");
   const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   async function onSubmit(event) {
     event.preventDefault();
+    setLoading(true);
     try {
       const response = await fetch("/api/generate", {
         method: "POST",
@@ -16,7 +18,7 @@ export default function Home() {
         },
         body: JSON.stringify({ subject: subjectInput }),
       });
-
+      console.log(response)
       const data = await response.json();
       if (response.status !== 200) {
         throw data.error || new Error(`Request failed with status ${response.status}`);
@@ -27,10 +29,12 @@ export default function Home() {
       { text: data.result, isUser: false }
       ]);
       setSubjectInput("");
+      setLoading(false);
     } catch (error) {
       // Consider implementing your own error handling logic here
       console.error(error);
       alert(error.message);
+      setLoading(false);
     }
   }
 
@@ -65,6 +69,8 @@ export default function Home() {
           })}
         </div>
 
+        {loading && <div>Loading...</div>}
+        <div></div>
         <form onSubmit={onSubmit}>
           <input
             type="text"
@@ -72,8 +78,9 @@ export default function Home() {
             placeholder="Enter a subject, e.g. 'How great ninjas are', 'How to become a ninja', 'Ninja history', etc."
             value={subjectInput}
             onChange={(e) => setSubjectInput(e.target.value)}
+            disabled={loading}
           />
-          <input type="submit" value="Ask" />
+          <input type="submit" disabled={loading} value="Ask" />
         </form>
 
       </main>
