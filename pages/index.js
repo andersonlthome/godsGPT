@@ -6,35 +6,45 @@ export default function Home() {
   const [subjectInput, setSubjectInput] = useState("");
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   async function onSubmit(event) {
     event.preventDefault();
+    const gods = ['Jesus', 'Deus Judaico', 'Buda', 'Krishna']
+    let subject = subjectInput;
+    setMessages(() => [...messages, { text: subject, isUser: true }]);
+    setSubjectInput("");
+
     setLoading(true);
+
+    for (let i = 0; i < gods.length; i++) {
+      sendMessage(subject, gods[i]);
+    }
+
+    setLoading(false);
+  }
+
+  async function sendMessage(subject, god) {
     try {
       const response = await fetch("/api/generate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ subject: subjectInput }),
+        body: JSON.stringify({ subject: subject, god: god }),
       });
-      console.log(response)
       const data = await response.json();
       if (response.status !== 200) {
         throw data.error || new Error(`Request failed with status ${response.status}`);
       }
 
-      setMessages([...messages,
-      { text: subjectInput, isUser: true },
-      { text: data.result, isUser: false }
-      ]);
-      setSubjectInput("");
-      setLoading(false);
+      setMessages((messages) => [...messages, { text: data.result, isUser: false }]);
+
     } catch (error) {
       // Consider implementing your own error handling logic here
       console.error(error);
       alert(error.message);
-      setLoading(false);
+
     }
   }
 
@@ -56,6 +66,16 @@ export default function Home() {
         <h3>Ask the deities</h3>
 
         <div className={styles.chatContainer}>
+          {messages.map((message, i) => (
+            <div className={`${styles.chatMessage} ${message.isUser && styles.chatMessageRight}`} key={i}>
+              <div className={`${styles.chatBubble} ${message.isUser && styles.chatBubbleRight}`}>
+                <p key={i}>{message.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* <div className={styles.chatContainer}>
           {messages.map((message) => {
             return message.text.split("\n").map((text, i) => {
               return text.length > 0 && (
@@ -67,10 +87,8 @@ export default function Home() {
               )
             })
           })}
-        </div>
+        </div> */}
 
-        {loading && <div>Loading...</div>}
-        <div></div>
         <form onSubmit={onSubmit}>
           <input
             type="text"

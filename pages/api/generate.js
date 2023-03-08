@@ -25,6 +25,16 @@ export default async function (req, res) {
     return;
   }
 
+  const god = req.body.god || '';
+  if (subject.trim().length === 0) {
+    res.status(400).json({
+      error: {
+        message: "Please enter a valid god",
+      }
+    });
+    return;
+  }
+
   try {
     // const completion = await openai.createCompletion({
     //   model: 'gpt-3.5-turbo',//"text-davinci-003",
@@ -76,7 +86,7 @@ export default async function (req, res) {
           Termino do exemplo.
 
           Em um certo dia me junto à mesa e faço a seguinte pergunta:
-          Eu: "${subject}"
+          Eu: "${god}, ${subject}"
           `
         }
         // Como podemos ver, todas as religiões enfatizam a importância de agir com responsabilidade, respeito e consideração em todos os relacionamentos. É importante refletir sobre como nossas ações se alinham com nossos valores e objetivos de vida, e agir com sabedoria e discernimento.
