@@ -18,6 +18,20 @@
   src: url('./assets/fonts/Chapbook/Chapbook-Regular.otf');
 }
 
+.main header {
+  display: flex;  
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;  
+  width: 90%;  
+}
+/* .headerUp {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+} */
+
 .main,
 .main input {
   font-size: 16px;  
@@ -37,30 +51,37 @@
   background-size: cover;
   background-position: bottom;
   background-color: rgba(0, 0, 0, 0.5);
-  background-image: url("./assets/images/all-gods.jpg");
+  /* background-image for smartphone e for other bigger screens, depends of the size of screen */
+  
+  background-image: url("./assets/images/all-gods-1920-1080.jpg");
 }
 .main .icon {
   width: 34px;
 }
-.main h3 {
+.main h1 {
   font-size: 32px;
   line-height: 40px;
   font-weight: bold;
   color: #ffffff;
-  margin: 16px 0 40px;
+  margin: 10px 0 0 0 ;
+}
+.main h3 {
+  margin: 0;
 }
 .main form {
   display: flex;
   flex-direction: row;
-  width: 320px;
+  width: 60%;
+  justify-content: center;
 }
 .main input[type="text"] {
   padding: 12px 16px;
   /* border: 1px solid #10a37f; */
   border-radius: 4px;
   margin-bottom: 24px;
-  background-color: rgba(0, 0, 0, 0.5)
-  /* outline-color: #10a37f; */
+  background-color: rgba(0, 0, 0, 0.8);
+  /* outline-color: #10a37f; */  
+  width: inherit;
 }
 .main ::placeholder {
   color: #d1d1eb;
@@ -70,7 +91,7 @@
   /* padding: 12px 0; */
   /* color: #fff; */
   /* background-color: #10a37f; */
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.8);
   border: none;
   border-radius: 4px;
   text-align: center;
@@ -85,22 +106,60 @@
   margin-top: 40px;
 }
 
+.godsContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 60%;
+  justify-content: center;
+}
+.godsButton {
+  display: flex;
+  /* flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px; */
+  /* margin: 10px; */
+  /* border-radius: 50%; */
+  border-color: rgba(0, 0, 0, 0);
+  font-size: 16px;
+  font-family: "Chapbook", Helvetica, sans-serif;
+  background-color: rgba(0, 0, 0, 0);
+  color: rgb(100, 99, 99);
+  cursor: pointer;
+}
+.godsButtonActive {
+    color: #ffffff;
+}
+
 .chatContainer {
-  margin: 0 auto;
+  margin: 10px 0;
   padding: 10px 10vw;  
   width: 80%;
   height: 47vh;
-  
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: #a51919 #000000;
-  scroll-behavior: smooth;
-  
-  
+  scrollbar-color: #ffffff #000000;
+  scroll-behavior: smooth;  
 }
 .chatMessage {
   display: flex;
   margin-bottom: 20px;
+}
+/* Set the width and color of the scrollbar track */
+.chatContainer::-webkit-scrollbar {
+  width: 10px;
+}
+
+.chatContainer::-webkit-scrollbar-track {
+  background-color: #000000;
+}
+
+/* Set the color and style of the scrollbar thumb */
+.chatContainer::-webkit-scrollbar-thumb {
+  background-color: #ffffff;
+  border: 2px solid #000000;
 }
 /* .chatBubble {
   background-color: rgba(232, 240, 254, 0.7);
@@ -119,7 +178,7 @@
 
 /* ============================ */
 .chatBubble {
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.8);
   border-radius: 10px;
   padding: 10px;
   position: relative;
