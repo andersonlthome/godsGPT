@@ -15,25 +15,27 @@ export default async function (req, res) {
     return;
   }
 
-  const subject = req.body.subject || '';
-  if (subject.trim().length === 0) {
-    res.status(400).json({
-      error: {
-        message: "Please enter a valid subject",
-      }
-    });
-    return;
-  }
+  const { subject, god, messages } = req.body;
+  console.log(subject, god, messages)
+  // const subject = req.body.subject || '';
+  // if (subject.trim().length === 0) {
+  //   res.status(400).json({
+  //     error: {
+  //       message: "Please enter a valid subject",
+  //     }
+  //   });
+  //   return;
+  // }
 
-  const god = req.body.god || '';
-  if (subject.trim().length === 0) {
-    res.status(400).json({
-      error: {
-        message: "Please enter a valid god",
-      }
-    });
-    return;
-  }
+  // const god = req.body.god || '';
+  // if (subject.trim().length === 0) {
+  //   res.status(400).json({
+  //     error: {
+  //       message: "Please enter a valid god",
+  //     }
+  //   });
+  //   return;
+  // }
 
   try {
     // const completion = await openai.createCompletion({
@@ -52,8 +54,9 @@ export default async function (req, res) {
         // dont work great -> Please write in a way that would be rated as very unlikely written by AI when processed by an AI detection tool.
         // Please write in Brazil Portuguese language.
         // { "role": "user", "content": `Write an article about ${subject}. Please write in a way that would be rated as very unlikely written by AI when processed by an AI detection tool.”` }
+        // que me chamo Anderson, que moro no Brasil, tenho 25 anos, solteiro, sem filhos, estudo TI, e moro no Rio de Janeiro,
         {
-          "role": "user", "content": `Em um livro, Eu, que me chamo Anderson, que moro no Brasil, tenho 25 anos, solteiro, sem filhos, estudo TI, e moro no Rio de Janeiro, adquiri poderes mediunicos, e quando necessário, consigo ir para outra dimensão aonde se encontram em uma mesa, o Deus Judaíco, Jesus, Buda, Krishna, Maomé, Brahma, Olodumare e um Arcturiano. Quando é feita uma pergunta ou qualquer conversa, todos sempre respondem e ao final trazem pelo menos uma citação do livro sagrado da sua religião que corrobora com a sua resposta. Eles trazem citações dos seguintes livros:
+          "role": "user", "content": `Em um livro, Eu adquiri poderes mediunicos, e quando necessário, consigo ir para outra dimensão aonde se encontram em uma mesa, o Deus Judaíco, Jesus, Buda, Krishna, Maomé, Brahma, Olodumare e um Arcturiano. Quando é feita uma pergunta ou qualquer conversa, todos sempre respondem e ao final trazem pelo menos uma citação do livro sagrado da sua religião que corrobora com a sua resposta. Eles trazem citações dos seguintes livros:
           Deus Judaíco (Judaísmo): Torá
           Jesus (Cristianismo): Biblia
           Buda (Budimo): Páli Tripitakan
@@ -64,6 +67,12 @@ export default async function (req, res) {
           Arcuturiano: O Livro dos Arcturianos, Livro Codigos Arcturianos e/ou o Livro dos Arcuturianos 2
 
           Seguindo o exemplo abaixo:
+
+          Todas as entidades: "Olá, como você gostaria de ser chamado?"
+
+          Eu: "Anderson"
+
+          Todas as entidades: "Anderson, o que você gostaria de saber?"
 
           Eu:  "Oi, tenho a seguinte pergunta, está vindo o carnaval, culturalmente é aceito beijar mais mulheres, e eu queria saber se sentindo conexão e vendo que futuramente pode haver uma relação entre nós, posso beija-las?"
 
@@ -86,6 +95,9 @@ export default async function (req, res) {
           Termino do exemplo.
 
           Em um certo dia me junto à mesa e faço a seguinte pergunta:
+          ${messages.map((message) => {
+            return message.isUser ? `Eu: ${message.text}` : `${message.text}`;
+          })}
           Eu: "${god}, ${subject}"
           `
         }

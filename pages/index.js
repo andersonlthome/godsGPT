@@ -1,3 +1,4 @@
+'use client';
 import Head from "next/head";
 import { useState, useRef, useEffect } from "react";
 import styles from "./index.module.css";
@@ -15,17 +16,19 @@ export default function Home() {
   ]
   const [subjectInput, setSubjectInput] = useState("");
   const [messages, setMessages] = useState([]);
-  const [gods, setGods] = useState(() => {
-    let gods = [];
-    for (let i = 0; i < 4; i++) {
-      let god = allGods[Math.floor(Math.random() * allGods.length)];
-      if (!gods.includes(god)) gods.push(god);
-      else i--;
-    }
-    return gods;
-  });
+  const [gods, setGods] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    let godsAux = [];
+    for (let i = 0; i < 4; i++) {
+      let god = allGods[Math.floor(Math.random() * allGods.length)];
+      if (!godsAux.includes(god)) godsAux.push(god);
+      else i--;
+    }
+    setGods(godsAux);
+  }, [])
 
   const scrollRef = useRef(null);
 
@@ -43,18 +46,32 @@ export default function Home() {
     setFontSize((prevSize) => prevSize + 2);
   };
 
+  useEffect(() => {
+    setMessages([{ text: 'Olá, como você gostaria de ser chamado?', isUser: false }]);
+  }, []);
+
   async function onSubmit(event) {
     event.preventDefault();
-    // do a ramdom selection of gods
 
     let subject = subjectInput;
+    let allMessages = [...messages]
 
     setMessages(() => [...messages, { text: subject, isUser: true }]);
+
     setSubjectInput("");
 
     setLoading(true);
 
-    await Promise.all(gods.map(god => sendMessage(subject, god)))
+    if (messages.length === 1) {
+      setMessages((messages) => [...messages, { text: 'Agora, me fale mais, o que gostaria de saber?', isUser: false }])
+    }
+
+    else if (messages.length > 2) {
+      for (let god of gods) {
+        allMessages.push({ text: `${god}, ${subject}`, isUser: true });
+        allMessages.push(await sendMessage(subject, god, allMessages));
+      }
+    }
 
     setLoading(false);
 
@@ -66,14 +83,14 @@ export default function Home() {
     scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }
 
-  async function sendMessage(subject, god) {
+  async function sendMessage(subject, god, allMessages) {
     try {
       const response = await fetch("/api/generate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ subject: subject, god: god }),
+        body: JSON.stringify({ subject: subject, god: god, messages: allMessages }),
       });
       const data = await response.json();
       if (response.status !== 200) {
@@ -81,6 +98,8 @@ export default function Home() {
       }
 
       setMessages((messages) => [...messages, { text: data.result, isUser: false }]);
+
+      return { text: data.result, isUser: false };
 
     } catch (error) {
       // TODO: handle error
@@ -94,14 +113,16 @@ export default function Home() {
     if (gods.includes(god)) {
       setGods(gods.filter(g => g !== god))
     } else {
-      setGods([...gods, god])
+      setGods((gods) => [...gods, god])
     }
   }
+
+  useEffect(() => { console.log(gods) }, [gods])
 
   return (
     <div>
       <Head>
-        <title>Divine Known</title>
+        <title>Diviknown</title>
         <link rel="icon" href="/dog.png" />
       </Head>
 
@@ -127,7 +148,7 @@ export default function Home() {
 
           <div className={styles.godsContainer}>
             {allGods.map((god, i) => (
-              <button keys={i}
+              <button keys={`${god}-${i}`}
                 className={`${styles.godsButton} ${gods.includes(god) && styles.godsButtonActive}`}
                 style={{ fontSize: `${fontSize}px` }}
                 onClick={() => handleSelectGod(god)}>
